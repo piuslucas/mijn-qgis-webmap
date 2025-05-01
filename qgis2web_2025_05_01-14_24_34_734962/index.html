@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>Basislaag project_default_2023.qgs</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Bomen_1.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_MapTilerSatellite_0');
+        map.getPane('pane_MapTilerSatellite_0').style.zIndex = 400;
+        var layer_MapTilerSatellite_0 = L.tileLayer('https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=3pDIsum4pRtxtgr11iSi', {
+            pane: 'pane_MapTilerSatellite_0',
+            opacity: 0.7,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_MapTilerSatellite_0;
+        map.addLayer(layer_MapTilerSatellite_0);
+        function pop_Bomen_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td>' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GEOVISIA_I</th>\
+                        <td>' + (feature.properties['GEOVISIA_I'] !== null ? autolinker.link(String(feature.properties['GEOVISIA_I']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FOTO1</th>\
+                        <td>' + (feature.properties['FOTO1'] !== null ? autolinker.link(String(feature.properties['FOTO1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FOTO2</th>\
+                        <td>' + (feature.properties['FOTO2'] !== null ? autolinker.link(String(feature.properties['FOTO2']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FOTO3</th>\
+                        <td>' + (feature.properties['FOTO3'] !== null ? autolinker.link(String(feature.properties['FOTO3']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FOTO4</th>\
+                        <td>' + (feature.properties['FOTO4'] !== null ? autolinker.link(String(feature.properties['FOTO4']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOUD_</th>\
+                        <td>' + (feature.properties['ONDERHOUD_'] !== null ? autolinker.link(String(feature.properties['ONDERHOUD_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU01</th>\
+                        <td>' + (feature.properties['ONDERHOU01'] !== null ? autolinker.link(String(feature.properties['ONDERHOU01']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU02</th>\
+                        <td>' + (feature.properties['ONDERHOU02'] !== null ? autolinker.link(String(feature.properties['ONDERHOU02']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU03</th>\
+                        <td>' + (feature.properties['ONDERHOU03'] !== null ? autolinker.link(String(feature.properties['ONDERHOU03']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU04</th>\
+                        <td>' + (feature.properties['ONDERHOU04'] !== null ? autolinker.link(String(feature.properties['ONDERHOU04']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU05</th>\
+                        <td>' + (feature.properties['ONDERHOU05'] !== null ? autolinker.link(String(feature.properties['ONDERHOU05']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU06</th>\
+                        <td>' + (feature.properties['ONDERHOU06'] !== null ? autolinker.link(String(feature.properties['ONDERHOU06']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU07</th>\
+                        <td>' + (feature.properties['ONDERHOU07'] !== null ? autolinker.link(String(feature.properties['ONDERHOU07']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU08</th>\
+                        <td>' + (feature.properties['ONDERHOU08'] !== null ? autolinker.link(String(feature.properties['ONDERHOU08']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU09</th>\
+                        <td>' + (feature.properties['ONDERHOU09'] !== null ? autolinker.link(String(feature.properties['ONDERHOU09']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ONDERHOU0A</th>\
+                        <td>' + (feature.properties['ONDERHOU0A'] !== null ? autolinker.link(String(feature.properties['ONDERHOU0A']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_AANTAS</th>\
+                        <td>' + (feature.properties['VTA_AANTAS'] !== null ? autolinker.link(String(feature.properties['VTA_AANTAS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_ADRES</th>\
+                        <td>' + (feature.properties['VTA_ADRES'] !== null ? autolinker.link(String(feature.properties['VTA_ADRES']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_AFWIJK</th>\
+                        <td>' + (feature.properties['VTA_AFWIJK'] !== null ? autolinker.link(String(feature.properties['VTA_AFWIJK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_AFWI01</th>\
+                        <td>' + (feature.properties['VTA_AFWI01'] !== null ? autolinker.link(String(feature.properties['VTA_AFWI01']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_AFWI02</th>\
+                        <td>' + (feature.properties['VTA_AFWI02'] !== null ? autolinker.link(String(feature.properties['VTA_AFWI02']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_AFWI03</th>\
+                        <td>' + (feature.properties['VTA_AFWI03'] !== null ? autolinker.link(String(feature.properties['VTA_AFWI03']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_BOOMNU</th>\
+                        <td>' + (feature.properties['VTA_BOOMNU'] !== null ? autolinker.link(String(feature.properties['VTA_BOOMNU']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_BOOM01</th>\
+                        <td>' + (feature.properties['VTA_BOOM01'] !== null ? autolinker.link(String(feature.properties['VTA_BOOM01']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_BOOMPU</th>\
+                        <td>' + (feature.properties['VTA_BOOMPU'] !== null ? autolinker.link(String(feature.properties['VTA_BOOMPU']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_CONCLU</th>\
+                        <td>' + (feature.properties['VTA_CONCLU'] !== null ? autolinker.link(String(feature.properties['VTA_CONCLU']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_CONDIT</th>\
+                        <td>' + (feature.properties['VTA_CONDIT'] !== null ? autolinker.link(String(feature.properties['VTA_CONDIT']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_DATUM</th>\
+                        <td>' + (feature.properties['VTA_DATUM'] !== null ? autolinker.link(String(feature.properties['VTA_DATUM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_HOOGTE</th>\
+                        <td>' + (feature.properties['VTA_HOOGTE'] !== null ? autolinker.link(String(feature.properties['VTA_HOOGTE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_HOOG01</th>\
+                        <td>' + (feature.properties['VTA_HOOG01'] !== null ? autolinker.link(String(feature.properties['VTA_HOOG01']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_INSPEC</th>\
+                        <td>' + (feature.properties['VTA_INSPEC'] !== null ? autolinker.link(String(feature.properties['VTA_INSPEC']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_INTERV</th>\
+                        <td>' + (feature.properties['VTA_INTERV'] !== null ? autolinker.link(String(feature.properties['VTA_INTERV']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_JAAR</th>\
+                        <td>' + (feature.properties['VTA_JAAR'] !== null ? autolinker.link(String(feature.properties['VTA_JAAR']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_KROOND</th>\
+                        <td>' + (feature.properties['VTA_KROOND'] !== null ? autolinker.link(String(feature.properties['VTA_KROOND']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_MAAIVE</th>\
+                        <td>' + (feature.properties['VTA_MAAIVE'] !== null ? autolinker.link(String(feature.properties['VTA_MAAIVE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_MAATRE</th>\
+                        <td>' + (feature.properties['VTA_MAATRE'] !== null ? autolinker.link(String(feature.properties['VTA_MAATRE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_OMGEVI</th>\
+                        <td>' + (feature.properties['VTA_OMGEVI'] !== null ? autolinker.link(String(feature.properties['VTA_OMGEVI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_OPDRAC</th>\
+                        <td>' + (feature.properties['VTA_OPDRAC'] !== null ? autolinker.link(String(feature.properties['VTA_OPDRAC']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_OPMERK</th>\
+                        <td>' + (feature.properties['VTA_OPMERK'] !== null ? autolinker.link(String(feature.properties['VTA_OPMERK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_PLANTJ</th>\
+                        <td>' + (feature.properties['VTA_PLANTJ'] !== null ? autolinker.link(String(feature.properties['VTA_PLANTJ']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_PRIORI</th>\
+                        <td>' + (feature.properties['VTA_PRIORI'] !== null ? autolinker.link(String(feature.properties['VTA_PRIORI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_SOORT_</th>\
+                        <td>' + (feature.properties['VTA_SOORT_'] !== null ? autolinker.link(String(feature.properties['VTA_SOORT_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_SOOR01</th>\
+                        <td>' + (feature.properties['VTA_SOOR01'] !== null ? autolinker.link(String(feature.properties['VTA_SOOR01']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_STAMDI</th>\
+                        <td>' + (feature.properties['VTA_STAMDI'] !== null ? autolinker.link(String(feature.properties['VTA_STAMDI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_TOEKOM</th>\
+                        <td>' + (feature.properties['VTA_TOEKOM'] !== null ? autolinker.link(String(feature.properties['VTA_TOEKOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_VOLGEN</th>\
+                        <td>' + (feature.properties['VTA_VOLGEN'] !== null ? autolinker.link(String(feature.properties['VTA_VOLGEN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VTA_WOONPL</th>\
+                        <td>' + (feature.properties['VTA_WOONPL'] !== null ? autolinker.link(String(feature.properties['VTA_WOONPL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GV_X</th>\
+                        <td>' + (feature.properties['GV_X'] !== null ? autolinker.link(String(feature.properties['GV_X']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GV_Y</th>\
+                        <td>' + (feature.properties['GV_Y'] !== null ? autolinker.link(String(feature.properties['GV_Y']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Bomen_1_0(feature) {
+            switch(String(feature.properties['VTA_CONCLU'])) {
+                case 'Afgekeurd':
+                    return {
+                pane: 'pane_Bomen_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Attentieboom':
+                    return {
+                pane: 'pane_Bomen_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,63,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Goedgekeurd':
+                    return {
+                pane: 'pane_Bomen_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,186,3,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Risicoboom':
+                    return {
+                pane: 'pane_Bomen_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,0,4,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Bomen_1');
+        map.getPane('pane_Bomen_1').style.zIndex = 401;
+        map.getPane('pane_Bomen_1').style['mix-blend-mode'] = 'normal';
+        var layer_Bomen_1 = new L.geoJson(json_Bomen_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Bomen_1',
+            layerName: 'layer_Bomen_1',
+            pane: 'pane_Bomen_1',
+            onEachFeature: pop_Bomen_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Bomen_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Bomen_1);
+        map.addLayer(layer_Bomen_1);
+        var overlaysTree = [
+        {label: '<b>Basislagen</b>',  selectAllCheckbox: true, children: [
+            {label: 'Bomen<br /><table><tr><td style="text-align: center;"><img src="legend/Bomen_1_Afgekeurd0.png" /></td><td>Afgekeurd</td></tr><tr><td style="text-align: center;"><img src="legend/Bomen_1_Attentieboom1.png" /></td><td>Attentieboom</td></tr><tr><td style="text-align: center;"><img src="legend/Bomen_1_Goedgekeurd2.png" /></td><td>Goedgekeurd</td></tr><tr><td style="text-align: center;"><img src="legend/Bomen_1_Risicoboom3.png" /></td><td>Risicoboom</td></tr></table>', layer: layer_Bomen_1},]},
+            {label: "MapTiler Satellite", layer: layer_MapTilerSatellite_0, radioGroup: 'bm' },]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        setBounds();
+        var i = 0;
+        layer_Bomen_1.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['VTA_BOOM01'] !== null?String('<div style="color: #323232; font-size: 11pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['VTA_BOOM01']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Bomen_1'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Bomen_1]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Bomen_1]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Bomen_1]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Bomen_1]);
+        });
+        </script>
+    </body>
+</html>
